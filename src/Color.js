@@ -11,19 +11,19 @@ export function setGroupingHighlight(grouping) {
         return;
     }
 
-    let groups = Array.from($("." + grouping));
+    let groups = Array.from(document.getElementsByClassName(grouping));
     for (var i = 0; i < groups.length; i++) {
         let groupColor = ColorPalette[i % ColorPalette.length];
-        if (!$(groups[i]).parents(".selected").length && !$(groups[i]).hasClass("selected")) {
+        if (!$(groups[i]).parents(".selected").length && !groups[i].classList.contains("selected")) {
             groups[i].setAttribute("fill", groupColor);
-            $(groups[i]).addClass("highlighted");
+            groups[i].classList.add("highlighted");
         } else {
-            if (!$(groups[i]).hasClass("selected")) {
+            if (groups[i].classList.contains("selected")) {
                 groups[i].setAttribute("fill", null);
             } else {
                 groups[i].setAttribute("fill", "#d00");
             }
-            $(groups[i]).removeClass("highlighted");
+            groups[i].classList.remove("highlighted");
         }
     }
 }
@@ -33,10 +33,10 @@ export function setGroupingHighlight(grouping) {
  */
 export function unsetGroupingHighlight() {
     unsetStaffHighlight();
-    let highlighted = Array.from($(".highlighted").filter((index, elem) => { return !$(elem.parentElement).hasClass("selected"); }));
+    let highlighted = Array.from(document.getElementsByClassName("highlighted")).filter(elem => { return !elem.parentElement.classList.contains("selected"); });
     highlighted.forEach(elem => {
         elem.setAttribute("fill", null);
-        $(elem).removeClass("highlighted");
+        elem.classList.remove("highlighted");
     });
 }
 
@@ -65,14 +65,14 @@ export function unsetStaffHighlight() {
  * @param {string} color - The color to highlight the staff.
  */
 export function highlight(staff, color) {
-    let children = Array.from($("#" + staff.id).children());
+    let children = Array.from(document.getElementById(staff.id).children);
     children.forEach(child => {
         if (child.tagName === "path") {
             child.setAttribute("stroke", color);
         } else {
             child.setAttribute("fill", color);
         }
-        $(child).addClass("highlighted");
+        child.classList.add("highlighted");
     });
 }
 

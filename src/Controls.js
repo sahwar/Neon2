@@ -26,14 +26,16 @@ export function initDisplayControls (zHandler) {
     setHighlightControls();
     setBurgerControls();
 
-    $("#toggleDisplay").on("click", () => {
-        if ($("#displayContents").is(":hidden")) {
-            $("#displayContents").css("display", "");
-            $("#toggleDisplay").attr("xlink:href", Icons + "#dropdown-down");
+    document.getElementById("toggleDisplay").addEventListener("click", () => {
+        let displayContents = document.getElementById("displayContents");
+        let toggleDisplay = document.getElementById("toggleDisplay");
+        if (toggleDisplay.matches(":hidden")) {
+            displayContents.style.display = "";
+            toggleDisplay.setAttribute("xlink:href", Icons + "#dropdown-down");
         }
         else {
-            $("#displayContents").css("display", "none");
-            $("#toggleDisplay").attr("xlink:href", Icons + "#dropdown-side");
+            displayContents.style.display = "none";
+            toggleDisplay.setAttribute("xlink:href", Icons + "#dropdown-side");
         }
     });
 }
@@ -135,41 +137,50 @@ export function setOpacityFromSlider() {
  * Set listener on staff highlighting checkbox.
  */
 export function setHighlightControls() {
-    $("#highlight-button").on("click", (evt) => {
+    document.getElementById("highlight-button").addEventListener("click", (evt) => {
         evt.stopPropagation();
-        $("#highlight-dropdown").toggleClass("is-active");
-        if ($("#highlight-dropdown").hasClass("is-active")) {
-            $("body").one("click", highlightClickaway);
-            $("#highlight-staff").on("click", () => {
-                $("#highlight-dropdown").removeClass("is-active");
-                $(".highlight-selected").removeClass("highlight-selected");
-                $("#highlight-staff").addClass("highlight-selected");
-                $("#highlight-type").html("&nbsp;- Staff");
+        let highlightDropdown = document.getElementById("highlight-dropdown");
+        highlightDropdown.classList.toggle("is-active");
+        if (highlightDropdown.classList.contains("is-active")) {
+            body.addEventListener("click", highlightClickaway, { once: true });
+            document.getElementById("highlight-staff").addEventListener("click", () => {
+                document.getElementById("highlight-dropdown").classList.remove("is-active");
+                document.getElementsByClassName("highlight-selected").forEach(e => {
+                    e.classList.remove("highlight-selected");
+                });
+                document.getElementById("highlight-staff").classList.add("highlight-selected");
+                document.getElementById("highlight-type").innerHTML = "&nbsp;- Staff";
                 Color.setGroupingHighlight("staff");
             });
-            $("#highlight-syllable").on("click", () => {
-                $("#highlight-dropdown").removeClass("is-active");
-                $(".highlight-selected").removeClass("highlight-selected");
-                $("#highlight-syllable").addClass("highlight-selected");
-                $("#highlight-type").html("&nbsp;- Syllable");
+            document.getElementById("highlight-syllable").addEventListener("click", () => {
+                document.getElementById("highlight-dropdown").classList.remove("is-active");
+                document.getElementsByClassName("highlight-selected").forEach(e => {
+                    e.classList.remove("highlight-selected");
+                });
+                document.getElementById("highlight-syllable").classList.add("highlight-selected");
+                document.getElementById("highlight-type").innerHTML = "&nbsp;- Syllable";
                 Color.setGroupingHighlight("syllable");
             });
-            $("#highlight-neume").on("click", () => {
-                $("#highlight-dropdown").removeClass("is-active");
-                $(".highlight-selected").removeClass("highlight-selected");
-                $("#highlight-neume").addClass("highlight-selected");
-                $("#highlight-type").html("&nbsp;- Neume");
+            document.getElementById("highlight-neume").addEventListener("click", () => {
+                document.getElementById("highlight-dropdown").classList.remove("is-active");
+                document.getElementsByClassName("highlight-selected").forEach(e => {
+                    e.classList.remove("highlight-selected");
+                });
+                document.getElementById("highlight-neume").classList.add("highlight-neume");
+                document.getElementById("highlight-type").innerHTML = "&nbsp;- Neume";
                 Color.setGroupingHighlight("neume");
             });
-            $("#highlight-none").on("click", () => {
-                $("#highlight-dropdown").removeClass("is-active");
-                $(".highlight-selected").removeClass("highlight-selected");
-                $("#highlight-type").html("&nbsp;- Off");
+            document.getElementById("highlight-none").addEventListener("click", () => {
+                document.getElementById("highlight-dropdown").classList.remove("is-active");
+                document.getElementsByClassName("highlight-selected").forEach(e => {
+                    e.classList.remove("highlight-selected");
+                });
+                document.getElementById("highlight-stype").innerHTML = "&nbsp;- Off";
                 Color.unsetGroupingHighlight();
             });
         }
         else {
-            $("body").off("click", highlightClickaway);
+            body.removeEventListener("click", highlightClickaway);
         }
     });
 }
@@ -177,36 +188,39 @@ export function setHighlightControls() {
  * Set listener on burger menu for smaller screens.
  */
 function setBurgerControls () {
-    $("#burgerMenu").on("click", () => {
-        $(this).toggleClass('is-active');
-        $("#navMenu").toggleClass('is-active');
-    })
+    document.getElementById("burgerMenu").addEventListener("click", () => {
+        this.classList.toggle("is-active");
+        document.getElementById("navMenu").classList.toggle("is-active");
+    });
 }
 
 /**
  * Clickaway listener for the highlight dropdown.
  */
 function highlightClickaway () {
-    $("body").off("click", highlightClickaway);
-    $("#highlight-dropdown").removeClass("is-active");
+    body.removeEventListener("click", highlightClickaway);
+    document.getElementById("highlight-dropdown").classList.remove("is-active");
 }
 
 /**
  * Update the visibility of the text box and set handlers.
  */
 export function updateSylVisibility() {
-    if ($("#displayText").is(":checked")) {
-        $("#syl_text").css("display", "");
-        $("#syl_text").html("<p>" + Text.getSylText() + "</p>");
-        let spans = Array.from($("#syl_text").children("p").children("span"));
-        spans.forEach(span => {
-            $(span).on("mouseenter", () => {
-                let syllable = $("#" + $(span).attr("class"));
-                syllable.addClass("syl-select");
-                syllable.attr("fill", "#d00");
+    if (document.getElementById("displayText").matches(":checked")) {
+        let sylText = document.getElementById("syl_text");
+        sylText.style.display = "";
+        sylText.innerHTML = "<p>" + Text.getSylText() + "</p>";
+        let ps = Array.from(sylText.children).filter(elem => { elem.tagName === "p"; });
+        Array.from(ps.children).filter(elem => { elem.tagName === "span"; }).forEach(span => {
+            span.addEventListener("mouseenter", () => {
+                let syllable = document.getElementById(span.className);
+                syllable.classList.addClass("syl-select");
+                syllable.setAttribute("fill", "#d00");
             });
-            $(span).on("mouseleave", () => {
-                $("#" + $(span).attr("class")).removeClass("syl-select").attr("fill", null);
+            span.addEventListener("mouseleave", () => {
+                let syllable = document.getElementById(span.className)
+                syllable.classList.remove("syl-select");
+                syllable.removeAttribute("fill");
             });
         });
 
@@ -214,7 +228,7 @@ export function updateSylVisibility() {
             setTextEdit();
         }
     } else {
-        $("#syl_text").css("display", "none");
+        document.getElementById("syl_text").style.display = "none";
     }
 }
 
@@ -222,13 +236,13 @@ export function updateSylVisibility() {
  * Update the visibility of infoBox
  */
 export function updateInfoVisibility() {
-    if ($("#displayInfo").is(":checked")) {
-        $("#neume_info").append("<article class='message' style='display: none;'><div class='message-header'><p></p>" +
+    if (document.getElementById("displayInfo").matches(":checked")) {
+        document.getElementById("neume_info").innerHTML = "<article class='message' style='display: none;'><div class='message-header'><p></p>" +
             "<button class='delete' id='notification-delete' aria-label='delete'></button></div>" +
-            "<div class='message-body'></div>");
+            "<div class='message-body'></div>";
     }
     else {
-        $("#neume_info").empty();
+        document.getElementById("neume_info").innerHTML = "";
     }
 }
 
@@ -250,7 +264,7 @@ export function setTextEdit() {
  * Reset the highlight for different types based on the 'highlight-selected' class in the DOM.
  */
 export function updateHighlight() {
-    let highlightId = $(".highlight-selected").attr("id");
+    let highlightId = document.getElementsByClassName("highlight-selected")[0].id;
     switch (highlightId) {
         case "highlight-staff":
             Color.setGroupingHighlight("staff");
@@ -272,43 +286,48 @@ export function updateHighlight() {
  * @param {NeonView} neonView - The NeonView parent.
  */
 export function initInsertEditControls(neonView) {
-    $("#toggleInsert").on("click", () => {
-        if ($("#insertContents").is(":hidden")) {
-            $("#insertContents").css("display", "");
-            $("#toggleInsert").attr("xlink:href", Icons + "#dropdown-down");
-
-        } else {
-            $("#insertContents").css("display", "none");
-            $("#toggleInsert").attr("xlink:href", Icons + "#dropdown-side");
+    document.getElementById("toggleInsert").addEventListener("click", () => {
+        let insertContents = document.getElementById("insertContents");
+        let toggleInsert = document.getElementById("toggleInsert");
+        if (insertContents.matches(":hidden")) {
+            insertContents.style.display = "";
+            toggleInsert.setAttribute("xlink:href", Icons + "#dropdown-down");
+        }
+        else {
+            insertContents.style.display = "none";
+            toggleInsert.setAttribute("xlink:href", Icons + "#dropdown-side");
         }
     });
 
-    $("#toggleEdit").on("click", () => {
-        if ($("#editContents").is(":hidden")) {
-            $("#editContents").css("display", "");
-            $("#toggleEdit").attr("xlink:href", Icons + "#dropdown-down");
-        } else {
-            $("#editContents").css("display", "none");
-            $("#toggleEdit").attr("xlink:href", Icons + "#dropdown-side");
+    document.getElementById("toggleEdit").addEventListener("click", () => {
+        let editContents = document.getElementById("editContents");
+        let toggleEdit = document.getElementById("toggleEdit");
+        if (editContents.matches(":hidden")) {
+            editContents.style.display = "";
+            toggleEdit.setAttribute("xlink:href", Icons + "#dropdown-down");
+        }
+        else {
+            editContents.style.display = "none";
+            toggleEdit.setAttribute("xlink:href", Icons + "#dropdown-side");
         }
     });
 
-    $("#undo").on("click", undoHandler);
-    $("body").on("keydown", (evt) => {
+    document.getElementById("undo").addEventListener("click", undoHandler);
+    body.addEventListener("keydown", (evt) => {
         if (evt.key === "z" && (evt.ctrlKey || evt.metaKey)) {
             undoHandler(evt);
         }
     });
 
-    $("#redo").on("click", redoHandler);
-    $("body").on("keydown", (evt) => {
+    document.getElementById("redo").addEventListener("click", redoHandler);
+    body.addEventListener("keydown", (evt) => {
         if ((evt.key === "Z" || (evt.key === "z" && evt.shiftKey)) && (evt.ctrlKey || evt.metaKey)) {
             redoHandler(evt);
         }
     });
 
-    $("#delete").on("click", removeHandler);
-    $("body").on("keydown", (evt) => {
+    document.getElementById("delete").addEventListener("click", removeHandler);
+    body.addEventListener("keydown", (evt) => {
         if (evt.key === "d" || evt.key === "Backspace")
             removeHandler(evt);
     });
@@ -356,18 +375,12 @@ export function initInsertEditControls(neonView) {
  * @param {InsertHandler} insertHandler - An InsertHandler to run the tasks.
  */
 export function bindInsertTabs(insertHandler) {
-    var insertTabs = $(".insertTab");
-    var tabIds = $.map(insertTabs, function(tab, i) {
-        return tab.id;
-    });
-
-    $.each(tabIds, function(i, tab) {
-        $("#" + tab).on("click", () => {
-            deactivate(".insertTab");
-            activate(tab, insertHandler);
+    Array.from(document.getElementsByClassName("insertTab")).forEach(tab => {
+        tab.addEventListener("click", () => {
+            deactivate("insertTab");
+            activate(tab.id, insertHandler);
             Cursor.resetCursor();
-            $("#insert_data").empty();
-            $("#insert_data").append(Contents.insertTabHtml[tab]);
+            document.getElementById("insert_data").innerHTML = Contents.insertTabHtml[tab.id];
             bindElements(insertHandler);
         });
     });
@@ -378,14 +391,10 @@ export function bindInsertTabs(insertHandler) {
  * @param {InsertHandler} insertHandler - An InsertHandler object.
  */
 function bindElements(insertHandler) {
-    var insertElements = $(".insertel");
-    var elementIds = $.map(insertElements, function(el, i){
-        return el.id;
-    });
-    $.each(elementIds, function(i, el){
-        $('#' + el).on('click', function(){
-            deactivate('.insertel');
-            activate(el, insertHandler);
+    Array.from(document.getElementsByClassName("insertel")).forEach(elem => {
+        elem.addEventListener("click", () => {
+            deactivate("insertel");
+            activate(el.id, insertHandler);
             Cursor.updateCursor();
         });
     });
@@ -397,19 +406,18 @@ function bindElements(insertHandler) {
  * @param {InsertHandler} insertHandler - An InsertHandler object.
  */
 function activate(id, insertHandler) {
-    $("#" + id).addClass("is-active");
+    document.getElementById(id).classList.add("is-active");
     insertHandler.insertActive(id);
 }
 
 /**
  * Deactivate a certain insert action.
- * @param {string} type - A JQuery selector for the action tab.
+ * @param {string} class - The class name to select for.
  */
 function deactivate(type) {
-    var elList = Array.from($(type));
-    elList.forEach((el, i) => {
-        $(elList[i]).removeClass("is-active");
-    })
+    Array.from(document.getElementsByClassName(type)).forEach(elem => {
+        elem.classList.remove("is-active");
+    });
 }
 
 /**
@@ -419,42 +427,34 @@ function deactivate(type) {
  */
 export function initNavbar(filename, neonView) {
     // setup navbar listeners
-    $("#save").on("click", () => {
+    document.getElementById("save").addEventListener("click", () => {
         neonView.saveMEI();
     });
-    $("body").on("keydown", (evt) => {
+    body.addEventListener("keydown", (evt) => {
         if (evt.key === "s") {
             neonView.saveMEI();
         }
     });
 
-    $("#revert").on("click", function(){
+    document.getElementById("revert").addEventListener("click", () => {
         if (confirm("Reverting will cause all changes to be lost. Press OK to continue.")) {
             Compatibility.revertFile(filename);
         }
     });
 
     //mei download link
-    $("#getmei").attr("href", filename);
+    document.getElementById("getmei").setAttribute("href", filename);
 
     //png download setup
-    /*
-    let regex = /[-\/\w]+\/([-\.\w]+)\.mei/;
-    if (Compatibility.getMode() === Compatibility.modes.pages) {
-        var pngFile = "/img/" + filename.replace(regex, '$1') + ".png";
-    } else {
-        var pngFile = "/uploads/png/" + filename.replace(regex, '$1') + ".png";
-    }
-    */
     let regex = /mei/g;
     var pngFile = filename.replace(regex, "png");
     if (Compatibility.getMode () === Compatibility.modes.pages) {
         pngFile = pngFile.replace("png", "img");
     }
-    $("#getpng").attr("href", pngFile);
+    document.getElementById("getpng").setAttribute("href", pngFile);
 
     if (Compatibility.getMode() === Compatibility.modes.rodan) {
-        $("#finalize").on("click", () => {
+        document.getElementById("finalize").addEventListener("click", () => {
             if (confirm("Finalizing will save your work and end the job. You will not be able to resume it. Continue?")) {
                 Compatibility.finalize(neonView.rodanGetMei());
             }
