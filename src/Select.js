@@ -523,11 +523,8 @@ function selectAll (elements, neon, neonView, dragHandler) {
                     let isFirstLigature = isLigature(ncs[0], neon);
                     let isSecondLigature = isLigature(ncs[1], neon);
                     if ((isFirstLigature && isSecondLigature) || (!isFirstLigature && !isSecondLigature)) {
-                        Grouping.triggerGrouping("ligature");
-                    }
-                   /*else{
                         Grouping.triggerGrouping("ligatureNc");
-                    }*/
+                    }
                 }
                 else {
                     if (ncs[0].parentElement != ncs[1].parentElement) {
@@ -536,9 +533,7 @@ function selectAll (elements, neon, neonView, dragHandler) {
                 }
             }
             else {
-                if (ncs[0].parentElement != ncs[1].parentElement) {
-                    Grouping.triggerGrouping("nc");
-                }
+                Grouping.triggerGrouping("nc");
             }
         }
         else if (ncs.length > 1 && noClefOrCustos) {
