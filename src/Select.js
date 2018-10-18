@@ -441,7 +441,7 @@ function selectAll (elements, neon, neonView, dragHandler) {
             let syllable = neumes[0].parentElement;
             let sylNeumes = Array.from(syllable.children).filter(child => $(child).hasClass("neume"));
             let result = false;
-            if(neume.length == sylNeumes.length){
+            if(neumes.length == sylNeumes.length){
                 result = true;
                 sylNeumes.forEach(neume => { result = result && neumes.includes(neume); });
             }
