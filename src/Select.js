@@ -439,25 +439,19 @@ function selectAll (elements, neon, neonView, dragHandler) {
         }
         else if (neumes.length > 1) {
             let syllable = neumes[0].parentElement;
-            let group = false;
-            for (var i = 1; i < neumes.length; i++) {
-                if (syllable !== neumes[i].parentElement) {
-                    group = true;
-                    break;
-                }
+            let sylNeumes = Array.from(syllable.children).filter(child => $(child).hasClass("neume"));
+            let result = false;
+            if(neume.length == sylNeumes.length){
+                result = true;
+                sylNeumes.forEach(neume => { result = result && neumes.includes(neume); });
             }
-            if (group) {
-                Grouping.triggerGrouping("neume");
+            if (result) {
+                unselect();
+                select(syllable);
+                SelectOptions.triggerSylActions();
             }
             else {
-                let sylNeumes = Array.from(syllable.children).filter(child => $(child).hasClass("neume"));
-                let result = true;
-                sylNeumes.forEach(neume => { result = result && neumes.includes(neume); });
-                if (result) {
-                    unselect();
-                    select(syllable);
-                    SelectOptions.triggerSylActions();
-                }
+                Grouping.triggerGrouping("neume");
             }
         }
         else if (neumes.length == 1) {
@@ -538,24 +532,19 @@ function selectAll (elements, neon, neonView, dragHandler) {
         }
         else if (ncs.length > 1 && noClefOrCustos) {
             let neume = ncs[0].parentElement;
-            let group = false;
-            for (var i = 1; i < ncs.length; i++) {
-                if (ncs[i].parentElement !== neume) {
-                    group = true;
-                    break;
-                }
-            }
-            if (group) {
-                Grouping.triggerGrouping("nc");
-            } else {
-                let neumeNcs = Array.from(neume.children).filter(nc => $(nc).hasClass("nc"));
-                let result = true;
+            let neumeNcs = Array.from(neume.children).filter(nc => $(nc).hasClass("nc"));
+            let result = false;
+            if(ncs.length == neumeNcs.length){
+                result = true;
                 neumeNcs.forEach(nc => { result = result && ncs.includes(nc); });
-                if (result) {
-                    unselect();
-                    select(neume);
-                    SelectOptions.triggerNeumeActions();
-                }
+            }
+            if (result) {
+                unselect();
+                select(neume);
+                SelectOptions.triggerNeumeActions();
+            }
+            else {
+                Grouping.triggerGrouping("nc");
             }
         }
         else if (ncs.length === 1) {
